@@ -2,7 +2,7 @@
     padding: 5px 15px;
     color: teal;
     font-size: 14px;
-    background: transparent;
+    background: transparent; /*текст заднього фону прозорий*/
     border: 1px solid teal;
     cursor: pointer;
 }

@@ -1,12 +1,14 @@
 import React from 'react';
-import classes from './MyButton.module.css';
+import classes from "./MyButton.module.css";
 
 
-const MyButton = (props) => {
+const MyButton = ({children, ...props}) => {
+    //деструктурізацією дістали проп children
     return (
-        <button className={classes.myBtn}>
-            
-        </button>
+        <button {... props} className={classes.myBtn}>
+            {children}
+        </button>//отримати стиль як властивість об'єкта
+        //{... props} розгортаємо весть об'єкт в button. Всі probs які передаємо в MyButton летітимуть в цю кнопку
     );
 };
 
