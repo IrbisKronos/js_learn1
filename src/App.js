@@ -6,6 +6,8 @@ import PostItem from "./components/PostItem";
 import PostList from "./components/PostList";
 import MyButton from "./components/UI/button/MyButton";
 import MyInput from "./components/UI/input/MyInput";
+import PostForm from "./components/PostForm";
+import MySelectX from "./components/UI/select/MySelectX";
 
 function App() {
     const [posts, setPosts] = useState([
@@ -13,37 +15,40 @@ function App() {
         {id: 2, title: 'Javascript 2', body: 'Description'},
         {id: 3, title: 'Javascript 3', body: 'Description'},
     ])
-    const [post, setPost] = useState({title: '', body: ''})
 
-
-    const addNewPost = (e) => {
-        e.preventDefault()
-        setPosts([...posts, {...post, id: Date.now()}])
-        // не змінюємо стан напряму, викликаємо ф-ю SetPost і передаємо туди новий масив куди
-        // розгортаємо старий масив з вже існуючими постами і в кінець додаємо до нього новий
-        setPost({title: '', body: ''})
+    // ф-я на вхід очикуватиме новий створений пост (newPost). Його ми будемо передавати в компоненті PostForm (setPost)
+    // і все що ми робимо - змінюємо стан: розгортаємо старий масив і в кінці додаюмо новий пост
+    const createPost = (newPost) => {
+        setPosts([...posts, newPost])
     }
 
+    // Отримаємо post з дочірнього елемента
+    const removePost = (post) => {
+        setPosts(posts.filter(p => p.id !== post.id))
+    }
+
+    // - <PostForm create={createPost}/> передаємо в наш компонент ф-ю зворотнього виклика. Сам props назвимо create,
+    // а ф-ю - createPost
+    // - removePost передаємо без дужок, як посилання, бо якщо передати з дужками, то ф-я просто викличеться
+    // - "Постів не знайдено" - умовне відображення, в разі якщо постів нема. Виконується завдяки тернарному оператору
   return (
     <div className="App">
-        <form>
-            {/*Керований компонент*/}
-            <MyInput
-                value = {post.title}
-                onChange={e => setPost({...post, title: e.target.value})}
-                type="text"
-                placeholder="Назва поста"
+        <PostForm create={createPost}/>
+        <hr style={{margin: '15px 0'}}/>
+        <div>
+            <MySelectX
+                defaultValue="Сортування"
+                option={[]}
             />
-            {/*Некерований/Неконтрольований елемент*/}
-            <MyInput
-                value = {post.body}
-                onChange={e => setPost({...post, body: e.target.value})}
-                type="text"
-                placeholder="Опис поста"
-            />
-            <MyButton onClick={addNewPost}>Створити пост</MyButton>
-        </form>
-        <PostList posts={posts} title="Список постів про JS"/>
+        </div>
+        {posts.length !== 0
+        ? <PostList remove={removePost} posts={posts} title="Список постів про JS"/>
+        :
+            <h2 style={{textAlign: 'center'}}>
+                Постів не знайдено
+            </h2>
+        }
+
     </div>
   );
 }
