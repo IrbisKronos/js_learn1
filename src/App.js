@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useMemo, useRef, useState} from 'react';
 import Counter from "./components/Counter";
 import ClassCounter from "./components/ClassCounter";
 import './styles/App.css';
@@ -17,16 +17,20 @@ function App() {
     ])
     const [selectedSort, setSelectedSort] = useState('')
     const [searchQuery, setSearchQuery] = useState('')
-    
-    function getSortedPost() {
+
+    const sortedPosts = useMemo(() => {
         console.log('Спрацювала ф-я getSortedPost')
         if(selectedSort){
             return [...posts].sort((a,b) => a[selectedSort].localeCompare(b[selectedSort]))
         }
         return posts;
-    }
 
-    const sortedPosts = getSortedPost()
+    }, [selectedSort, posts])
+
+    const sortedAndSearchedPost = useMemo(() => {
+        return sortedPosts.filter(post => post.title.toLowerCase().includes(searchQuery.toLowerCase()))
+
+    }, [searchQuery, sortedPosts])
 
     // ф-я на вхід очикуватиме новий створений пост (newPost). Його ми будемо передавати в компоненті PostForm (setPost)
     // і все що ми робимо - змінюємо стан: розгортаємо старий масив і в кінці додаюмо новий пост
@@ -68,7 +72,7 @@ function App() {
             />
         </div>
         {posts.length !== 0
-        ? <PostList remove={removePost} posts={sortedPosts} title="Список постів про JS"/>
+        ? <PostList remove={removePost} posts={sortedAndSearchedPost} title="Список постів про JS"/>
         :
             <h2 style={{textAlign: 'center'}}>
                 Постів не знайдено
